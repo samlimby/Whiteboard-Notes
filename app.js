@@ -1,28 +1,63 @@
-let newX = 0, newY = 0, startX = 0, startY = 0;
+let newX = JSON.parse(localStorage.getItem("cardPositionX"));
+let newY = JSON.parse(localStorage.getItem("cardPositionY"));
+
+let cardPosition =  {
+    x: JSON.parse(localStorage.getItem("cardPositionX")) || 0,
+    y: JSON.parse(localStorage.getItem("cardPositionY")) || 0
+};
+
+requestAnimationFrame(() => {
+    yellowCard.style.left = cardPosition.x + 'px';
+    yellowCard.style.top = cardPosition.y + 'px';
+});
+
+let startX, startY;
+
+const yellowCardGroup = [];
 
 const yellowCard = document.getElementById("card-yellow");
 
+yellowCard.style.top = cardPosition.x + 'px'
+yellowCard.style.left = cardPosition.y + 'px'
+
 yellowCard.addEventListener('mousedown', mouseDown)
 
-function mouseDown(e){
-    startX = e.clientX
-    startY = e.clientY
+function mouseDown(e) {
+    startX = e.clientX;
+    startY = e.clientY;
 
-    document.addEventListener('mousemove', mouseMove)
-    document.addEventListener('mouseup', mouseUp)
-};
+    document.addEventListener('mousemove', mouseMove);
+    document.addEventListener('mouseup', mouseUp);
+}
 
-function mouseMove(e){
-    newX = startX - e.clientX 
-    newY = startY - e.clientY 
+function mouseMove(e) {
+    const deltaX = startX - e.clientX;
+    const deltaY = startY - e.clientY;
   
-    startX = e.clientX
-    startY = e.clientY
+    startX = e.clientX;
+    startY = e.clientY;
 
-    yellowCard.style.top = (yellowCard.offsetTop - newY) + 'px'
-    yellowCard.style.left = (yellowCard.offsetLeft - newX) + 'px'
-};
+    const newTop = yellowCard.offsetTop - deltaY;
+    const newLeft = yellowCard.offsetLeft - deltaX;
+    
+    yellowCard.style.top = newTop + 'px';
+    yellowCard.style.left = newLeft + 'px';
 
-function mouseUp(e){
-    document.removeEventListener('mousemove', mouseMove)
-};
+    localStorage.setItem("cardPositionX", JSON.stringify(newLeft));
+    localStorage.setItem("cardPositionY", JSON.stringify(newTop));
+}
+
+function mouseUp() {
+    document.removeEventListener('mousemove', mouseMove);
+}
+
+
+
+// things to do within the file
+// - localStorage save
+// - adding additional colors of post its
+// - zoom in and out of board
+// - type into post it notes
+// - delete post it notes
+// - profile/auth for app
+// - cloud saving
