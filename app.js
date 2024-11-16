@@ -17,6 +17,9 @@ const yellowCardGroup = [];
 
 const yellowCard = document.getElementById("card-yellow");
 const yellowCardText = document.getElementById("card-yellow_text");
+const yellowCardDelete = document.getElementById("yellow-card_delete");
+
+yellowCardDelete.style.display = "none";
 
 yellowCardText.value = localStorage.getItem("yellowCardText");
 
@@ -24,6 +27,14 @@ yellowCard.style.top = cardPosition.x + 'px'
 yellowCard.style.left = cardPosition.y + 'px'
 
 yellowCard.addEventListener('mousedown', mouseDown)
+
+yellowCard.addEventListener("mouseenter", function(){
+    yellowCardDelete.style.display = "block"
+})
+
+yellowCard.addEventListener("mouseleave", function(){
+    yellowCardDelete.style.display = "none"
+})
 
 function mouseDown(e) {
     startX = e.clientX;
