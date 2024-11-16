@@ -16,6 +16,9 @@ let startX, startY;
 const yellowCardGroup = [];
 
 const yellowCard = document.getElementById("card-yellow");
+const yellowCardText = document.getElementById("card-yellow_text");
+
+yellowCardText.value = localStorage.getItem("yellowCardText");
 
 yellowCard.style.top = cardPosition.x + 'px'
 yellowCard.style.left = cardPosition.y + 'px'
@@ -51,11 +54,16 @@ function mouseUp() {
     document.removeEventListener('mousemove', mouseMove);
 }
 
+yellowCardText.addEventListener("input", function() {
+
+    localStorage.setItem("yellowCardText", yellowCardText.value);
+
+})
+
 
 
 // things to do within the file
-// - localStorage save
-// - adding additional colors of post its
+// - adding additional colors of post its and more than one post it
 // - zoom in and out of board
 // - type into post it notes
 // - delete post it notes
