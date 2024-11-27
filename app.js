@@ -14,7 +14,7 @@ let isHover = false
 let mouseX = 0;
 let mouseY = 0;
 
-let cardPositions = [];
+let cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));;
 
 const cardGroup = [];
 
