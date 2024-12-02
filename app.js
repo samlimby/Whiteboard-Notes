@@ -1,6 +1,3 @@
-let newX = JSON.parse(localStorage.getItem("cardPositionX"));
-let newY = JSON.parse(localStorage.getItem("cardPositionY"));
-
 let currentMoveHandler; 
 let currentUpHandler;
 
@@ -14,13 +11,23 @@ let isHover = false
 let mouseX = 0;
 let mouseY = 0;
 
-let cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));;
+let cardPositions = [];
+const blueCardGroup = [];
+
+if (cardPositions) {
+    cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
+} else {
+    cardPositions.push(blueCardGroup)
+    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
+}
 
 const cardGroup = [];
 
+// localStorage.clear("cardPositionGroup")
+
 const yellowCardGroup = [];
 cardGroup.push(yellowCardGroup);
-const blueCardGroup = [];
+
 cardGroup.push(blueCardGroup);
 const redCardGroup = [];
 cardGroup.push(redCardGroup);
@@ -58,13 +65,16 @@ document.addEventListener('mousemove', function(event) {
     mouseY = event.clientY; 
 })
 
-document.addEventListener("click", (event) => {
+document.addEventListener("click", function(event) {
+    cardClick(event);
+  });
+
+function cardClick(event) {
     const hoveredElement = event.target;
     
-    // Check if clicked element is a card or its child elements
     const cardElement = hoveredElement.closest(".card-blue, .card-yellow, .card-orange, .card-red" || ".card-text");
     
-    if (!cardElement) return; // Exit if not clicking on a card
+    if (!cardElement) return; 
     
     if (isDragging) {
         isDragging = false;
@@ -77,11 +87,10 @@ document.addEventListener("click", (event) => {
         currentMoveHandler = null;
         currentUpHandler = null;
     } else {
-        console.log(cardElement.xAxis)
-        console.log(cardElement.yAxis)
+        console.log("movement")
         mouseDown(cardElement);
     }
-});
+}
 
 document.addEventListener("mouseover", (event) => {
     const hoveredElement = event.target
@@ -93,9 +102,18 @@ document.addEventListener("mouseover", (event) => {
     const cardDelete = cardElement.querySelector(".card-icon");
 
     if (cardElement) {
-
         cardDelete.style.display = "block";
-    }
+
+        cardDelete.addEventListener("click", function(){
+            cardDeleteAction();
+            !cardElement
+            document.removeEventListener('mousemove', currentMoveHandler);
+            document.removeEventListener('mouseup', currentUpHandler);
+            
+            currentMoveHandler = null;
+            currentUpHandler = null;
+        });
+    };
 })
 
 document.addEventListener("mouseout", (event) => {
@@ -132,6 +150,9 @@ function mouseDown(element) {
 
 function mouseMove(element) {
     if (!isDragging) return;
+
+    console.log(blueCardGroup)
+    console.log(cardPositions)
 
     const cardID = element.id;
     const last2 = cardID.slice(-2);
@@ -343,10 +364,7 @@ function loadCardPositions() {
 
     const storedPositions = JSON.parse(localStorage.getItem('cardPositionGroup')) || [];
 
-    // Iterate through stored positions
     storedPositions.forEach(cardPosition => {
-
-        console.log(storedPositions)
 
         let newDiv = document.createElement("div");
         const newDivID = cardPosition.id;
@@ -379,7 +397,32 @@ function loadCardPositions() {
     });
 }
 
-// Call this function when the page loads
+function cardDeleteAction() {
+    const hoveredElement = event.target;
+    const cardElement = hoveredElement.closest(".card-blue, .card-yellow, .card-orange, .card-red" || ".card-text");
+  
+    if (cardElement) {
+      const cardID = cardElement.id;
+      const cardIndex = cardPositions.findIndex(card => card.id === cardID);
+  
+      if (cardIndex !== -1) {
+        // Remove the card from the cardPositions array
+        cardPositions.splice(cardIndex, 1);
+        localStorage.setItem('cardPositionGroup', JSON.stringify(cardPositions));
+
+        console.log("card removed")
+        isDragging = true;
+
+        cardElement.remove();
+
+        console.log(isDragging)
+        cardClick()
+
+      }
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', loadCardPositions);
 
 
