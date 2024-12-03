@@ -11,15 +11,20 @@ let isHover = false
 let mouseX = 0;
 let mouseY = 0;
 
-let cardPositions = [];
+let cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
 const blueCardGroup = [];
 
-if (cardPositions) {
-    cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
-} else {
-    cardPositions.push(blueCardGroup)
-    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
-}
+function initialGroupSetting() {
+    console.log("function active");
+    if (!cardPositions || cardPositions.length === 0) {
+      cardPositions = [blueCardGroup];
+      localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
+    } else {
+      cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
+    }
+  }
+
+initialGroupSetting()
 
 const cardGroup = [];
 
@@ -67,7 +72,7 @@ document.addEventListener('mousemove', function(event) {
 
 document.addEventListener("click", function(event) {
     cardClick(event);
-  });
+});
 
 function cardClick(event) {
     const hoveredElement = event.target;
@@ -102,6 +107,7 @@ document.addEventListener("mouseover", (event) => {
     const cardDelete = cardElement.querySelector(".card-icon");
 
     if (cardElement) {
+        console.log("delete visible")
         cardDelete.style.display = "block";
 
         cardDelete.addEventListener("click", function(){
@@ -134,6 +140,8 @@ document.addEventListener("mouseout", (event) => {
 function mouseDown(element) {
     isDragging = true;
     const rect = element.getBoundingClientRect();
+
+    console.log("moving card")
 
     initialMouseX = mouseX;
     initialMouseY = mouseY;
@@ -184,16 +192,17 @@ function mouseMove(element) {
         blueCardGroup[blueCardIndex].yAxis = newTop;
     }
 
-    // Update or add to cardPositions
-    const existingCardIndex = cardPositions.findIndex(card => card.id === cardID);
-    
-    if (existingCardIndex !== -1) {
-        // Update existing card position
-        cardPositions[existingCardIndex].xAxis = newLeft;
-        cardPositions[existingCardIndex].yAxis = newTop;
-    } else {
-        // Add new card position
-        cardPositions.push({id: cardID, xAxis: newLeft, yAxis: newTop});
+    if (cardPositions) {
+        const existingCardIndex = cardPositions.findIndex(card => card.id === cardID);
+
+        if (existingCardIndex !== -1) {
+            // Update existing card position
+            cardPositions[existingCardIndex].xAxis = newLeft;
+            cardPositions[existingCardIndex].yAxis = newTop;
+        } else {
+            // Add new card position
+            cardPositions.push({id: cardID, xAxis: newLeft, yAxis: newTop});
+        }
     }
 
     // Update localStorage
@@ -423,7 +432,7 @@ function cardDeleteAction() {
 }
 
 
-document.addEventListener('DOMContentLoaded', loadCardPositions);
+document.addEventListener('DOMContentLoaded', loadCardPositions, initialGroupSetting);
 
 
 
