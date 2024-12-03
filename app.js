@@ -96,6 +96,7 @@ function cardClick(event) {
     } else {
         console.log("movement")
         mouseDown(cardElement);
+        cardTextValue(cardElement)
     }
 }
 
@@ -161,14 +162,13 @@ function mouseDown(element) {
 function mouseMove(element) {
     if (!isDragging) return;
 
-    console.log(cardPositions)
-
     const cardID = element.id;
-    const last2 = cardID.slice(-2);
 
-    const blueNameString = `card-blue${last2}`;
-
+    console.log(cardPositions)
     console.log(cardID)
+
+        // const last2 = cardID.slice(-2);
+    // const blueNameString = `card-blue${last2}`;
 
     // const blueSub = "blue";
 
@@ -187,7 +187,7 @@ function mouseMove(element) {
     element.style.top = `${newTop}px`;
 
     if (cardPositions) {
-        const cardIndex = cardPositions.findIndex(card => card.id === blueNameString); 
+        const cardIndex = cardPositions.findIndex(card => card.id === cardID); 
 
         if (cardIndex !== -1) {
             cardPositions[cardIndex].xAxis = newLeft;
@@ -213,6 +213,21 @@ function mouseMove(element) {
     // Update localStorage
     localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
 
+}
+
+function cardTextValue(element) {
+    
+    const textArea = element.querySelector(".card-text");
+    const cardID = element.id;
+
+    if (cardPositions) {
+        const cardIndex = cardPositions.findIndex(card => card.id === cardID); 
+
+        if (cardIndex !== -1) {
+            cardPositions[cardIndex].text = textArea.value;
+        }
+    
+    }
 }
 
 
@@ -397,12 +412,17 @@ function loadCardPositions() {
             
             newDiv.style.left = `${cardPosition.xAxis}px`;
             newDiv.style.top = `${cardPosition.yAxis}px`;
+            newTextArea.value = `${cardPosition.text}`;
+
+            // need to add conditional logic so that when there is no text it reverts to placeholder value for the textarea
     
             if (cardPositions.length > 0) {
                 const lastCardIndex = cardPositions.length - 1;
                 cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
                 cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+                cardPositions[lastCardIndex].text = cardPosition.text;
             }
+
         });
     }
 }
