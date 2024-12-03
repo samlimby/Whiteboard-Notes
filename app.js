@@ -11,43 +11,45 @@ let isHover = false
 let mouseX = 0;
 let mouseY = 0;
 
-let cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
-const blueCardGroup = [];
-
 function initialGroupSetting() {
     console.log("function active");
-    if (!cardPositions || cardPositions.length === 0) {
-      cardPositions = [blueCardGroup];
-      localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
+
+    // Check if localStorage already contains the key "cardPositionGroup"
+    let storedValue = localStorage.getItem("cardPositionGroup");
+
+    if (!storedValue || storedValue === "null") {
+        console.log("no local detected");
+        // If not present or invalid, initialize it as an empty array
+        localStorage.setItem("cardPositionGroup", JSON.stringify([]));
+        storedValue = JSON.stringify([]); // Reset the value
     } else {
-      cardPositions = JSON.parse(localStorage.getItem("cardPositionGroup"));
+        console.log("local detected");
     }
-  }
 
-initialGroupSetting()
+    // Parse and assign to cardPositions
+    cardPositions = JSON.parse(storedValue);
+}
 
-const cardGroup = [];
+let cardPositions;
 
+initialGroupSetting();
+
+
+// cardPositions.splice(0, 6)
 // localStorage.clear("cardPositionGroup")
 
-const yellowCardGroup = [];
-cardGroup.push(yellowCardGroup);
+console.log(cardPositions)
 
-cardGroup.push(blueCardGroup);
-const redCardGroup = [];
-cardGroup.push(redCardGroup);
-const orangeCardGroup = [];
-cardGroup.push(orangeCardGroup);
 
 function UpdateCardPosition(colorIndex, cardIndex, position) {
     requestAnimationFrame(() => {
 
-        if (cardGroup[colorIndex] && cardGroup[colorIndex][cardIndex]) {
-            cardGroup[colorIndex][cardIndex].style.left = position.x + 'px';
+        if (cardPositions[colorIndex]) {
+            cardPositions[colorIndex].style.left = position.x + 'px';
         }
 
-        if (cardGroup[colorIndex] && cardGroup[colorIndex][cardIndex]) {
-            cardGroup[colorIndex][cardIndex].style.left = position.y + 'px';
+        if (cardPositions[colorIndex]) {
+            cardPositions[colorIndex].style.left = position.y + 'px';
         }
     });
 }
@@ -159,13 +161,14 @@ function mouseDown(element) {
 function mouseMove(element) {
     if (!isDragging) return;
 
-    console.log(blueCardGroup)
     console.log(cardPositions)
 
     const cardID = element.id;
     const last2 = cardID.slice(-2);
 
     const blueNameString = `card-blue${last2}`;
+
+    console.log(cardID)
 
     // const blueSub = "blue";
 
@@ -183,13 +186,14 @@ function mouseMove(element) {
     element.style.left = `${newLeft}px`;
     element.style.top = `${newTop}px`;
 
+    if (cardPositions) {
+        const cardIndex = cardPositions.findIndex(card => card.id === blueNameString); 
 
-    // Update blueCardGroup
-    const blueCardIndex = blueCardGroup.findIndex(card => card.id === blueNameString);
-
-    if (blueCardIndex !== -1) {
-        blueCardGroup[blueCardIndex].xAxis = newLeft;
-        blueCardGroup[blueCardIndex].yAxis = newTop;
+        if (cardIndex !== -1) {
+            cardPositions[cardIndex].xAxis = newLeft;
+            cardPositions[cardIndex].yAxis = newTop;
+        }
+    
     }
 
     if (cardPositions) {
@@ -199,6 +203,7 @@ function mouseMove(element) {
             // Update existing card position
             cardPositions[existingCardIndex].xAxis = newLeft;
             cardPositions[existingCardIndex].yAxis = newTop;
+            cardPositions[existingCardIndex].id = cardPositions[existingCardIndex].id;
         } else {
             // Add new card position
             cardPositions.push({id: cardID, xAxis: newLeft, yAxis: newTop});
@@ -224,7 +229,6 @@ function mouseMove(element) {
 //     currentUpHandler = null;
 // }
 
-// Initialize position from localStorage if needed
 function initializeCardPosition(element) {
     const savedX = localStorage.getItem("cardPositionX");
     const savedY = localStorage.getItem("cardPositionY");
@@ -251,6 +255,7 @@ function createBlueCard() {
     const newDiv = document.createElement("div");
     const randomID = Math.floor(Math.random() * 100)
     const newDivID = `card-blue${randomID}`;
+    console.log(newDivID)
     newDiv.id = newDivID;
     newDiv.classList.add("card-blue")
     const newTextArea = document.createElement("textarea");
@@ -269,21 +274,14 @@ function createBlueCard() {
     const blueCardDelete = document.getElementById(`blue-card_delete${randomID}`);
     blueCardDelete.style.display = "none";
 
-    // let serizalizedIdY = JSON.stringify(randomID) + "yAxis";
-    // let serizalizedIdX = JSON.stringify(randomID) + "xAxis";
+    const newCardObject = {
+        id: newDivID,
+        xAxis: mouseX,
+        yAxis: mouseY,
+    };
+    cardPositions.push(newCardObject);
 
-    let positionX = mouseMove(newDiv)
-
-    // localStorage.setItem("xAxis", JSON.stringify(startX));
-    // localStorage.setItem("yAxis", JSON.stringify(startY));
-
-    // let yAxis = JSON.parse(localStorage.getItem("xAxis"));
-    // let xAxis = JSON.parse(localStorage.getItem("yAxis"));
-
-    // Object.defineProperty(newDiv, "yAxis", {value: yAxis});
-    // Object.defineProperty(newDiv, "xAxis", {value: xAxis});
-
-    blueCardGroup.push(newDiv)
+    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
     
 }
 
@@ -311,7 +309,8 @@ function createYellowCard() {
     const yellowCardDelete = document.getElementById(`yellow-card_delete${randomID}`); 
     // yellowCardDelete.style.display = "none";
 
-    yellowCardGroup.push(newDiv)
+    cardPositions.push(newDiv)
+    // cardPositions.push(newDiv.id)
 
 }
 
@@ -338,7 +337,7 @@ function createOrangeCard() {
     const orangeCardDelete = document.getElementById(`orange-card_delete${randomID}`); 
     // yellowCardDelete.style.display = "none";
 
-    yellowCardGroup.push(newDiv)
+    cardPositions.push(newDiv)
 
 }
 
@@ -365,45 +364,47 @@ function createRedCard() {
     const redCardDelete = document.getElementById(`red-card_delete${randomID}`); 
     // yellowCardDelete.style.display = "none";
 
-    yellowCardGroup.push(newDiv)
+    cardPositions.push(newDiv)
 
 }
 
 function loadCardPositions() {
 
-    const storedPositions = JSON.parse(localStorage.getItem('cardPositionGroup')) || [];
+    const storedPositions = JSON.parse(localStorage.getItem('cardPositionGroup'));
 
-    storedPositions.forEach(cardPosition => {
+    if (cardPositions) {
+        storedPositions.forEach(cardPosition => {
 
-        let newDiv = document.createElement("div");
-        const newDivID = cardPosition.id;
-        newDiv.id = newDivID;
-        newDiv.classList.add("card-blue")
-        const newTextArea = document.createElement("textarea");
-        newTextArea.classList.add("card-text")
-        newTextArea.placeholder = "What's your next best idea?";
-        newDiv.appendChild(newTextArea);
-    
-        const newIconBox = document.createElement("div");
-        newIconBox.id = `blue-card_delete${newDivID}`;
-        newIconBox.classList.add("card-icon");
-        newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
-        newDiv.appendChild(newIconBox);
-    
-        const currentContainer = document.getElementById("container");
-        currentContainer.appendChild(newDiv)
-        const blueCardDelete = document.getElementById(`blue-card_delete${newDivID}`);
-        blueCardDelete.style.display = "none";
+            let newDiv = document.createElement("div");
+            const newDivID = cardPosition.id;
+            newDiv.id = newDivID;
+            newDiv.classList.add("card-blue")
+            const newTextArea = document.createElement("textarea");
+            newTextArea.classList.add("card-text")
+            newTextArea.placeholder = "What's your next best idea?";
+            newDiv.appendChild(newTextArea);
         
-        newDiv.style.left = `${cardPosition.xAxis}px`;
-        newDiv.style.top = `${cardPosition.yAxis}px`;
-
-        if (blueCardGroup.length > 0) {
-            const lastCardIndex = blueCardGroup.length - 1;
-            blueCardGroup[lastCardIndex].xAxis = cardPosition.xAxis;
-            blueCardGroup[lastCardIndex].yAxis = cardPosition.yAxis;
-        }
-    });
+            const newIconBox = document.createElement("div");
+            newIconBox.id = `blue-card_delete${newDivID}`;
+            newIconBox.classList.add("card-icon");
+            newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
+            newDiv.appendChild(newIconBox);
+        
+            const currentContainer = document.getElementById("container");
+            currentContainer.appendChild(newDiv)
+            const blueCardDelete = document.getElementById(`blue-card_delete${newDivID}`);
+            blueCardDelete.style.display = "none";
+            
+            newDiv.style.left = `${cardPosition.xAxis}px`;
+            newDiv.style.top = `${cardPosition.yAxis}px`;
+    
+            if (cardPositions.length > 0) {
+                const lastCardIndex = cardPositions.length - 1;
+                cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
+                cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+            }
+        });
+    }
 }
 
 function cardDeleteAction() {
@@ -432,7 +433,7 @@ function cardDeleteAction() {
 }
 
 
-document.addEventListener('DOMContentLoaded', loadCardPositions, initialGroupSetting);
+document.addEventListener('DOMContentLoaded', loadCardPositions);
 
 
 
