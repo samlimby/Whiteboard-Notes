@@ -167,7 +167,7 @@ function mouseMove(element) {
     console.log(cardPositions)
     console.log(cardID)
 
-        // const last2 = cardID.slice(-2);
+    // const last2 = cardID.slice(-2);
     // const blueNameString = `card-blue${last2}`;
 
     // const blueSub = "blue";
@@ -229,20 +229,6 @@ function cardTextValue(element) {
     
     }
 }
-
-
-// function mouseUp(element) {
-//     if (!isDragging) return;
-    
-//     isDragging = false;
-    
-//     // Remove the specific handlers we stored
-//     document.removeEventListener('mousemove', currentMoveHandler);
-//     document.removeEventListener('mouseup', currentUpHandler);
-    
-//     currentMoveHandler = null;
-//     currentUpHandler = null;
-// }
 
 function initializeCardPosition(element) {
     const savedX = localStorage.getItem("cardPositionX");
@@ -310,7 +296,7 @@ function createYellowCard() {
     newDiv.classList.add("card-yellow")
     const newTextArea = document.createElement("textarea");
     newTextArea.classList.add("card-text")
-    newTextArea.placeholder = "Express yourself!";
+    newTextArea.placeholder = "Go crazy with notetaking!";
     newDiv.appendChild(newTextArea);
 
     const newIconBox = document.createElement("div");
@@ -324,8 +310,14 @@ function createYellowCard() {
     const yellowCardDelete = document.getElementById(`yellow-card_delete${randomID}`); 
     // yellowCardDelete.style.display = "none";
 
-    cardPositions.push(newDiv)
-    // cardPositions.push(newDiv.id)
+    const newCardObject = {
+        id: newDivID,
+        xAxis: mouseX,
+        yAxis: mouseY,
+    };
+    cardPositions.push(newCardObject);
+
+    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
 
 }
 
@@ -349,10 +341,16 @@ function createOrangeCard() {
 
     const currentContainer = document.getElementById("container");
     currentContainer.appendChild(newDiv)
-    const orangeCardDelete = document.getElementById(`orange-card_delete${randomID}`); 
-    // yellowCardDelete.style.display = "none";
+    const orangeCardDelete = document.getElementById(`orange-card_delete${randomID}`);
 
-    cardPositions.push(newDiv)
+    const newCardObject = {
+        id: newDivID,
+        xAxis: mouseX,
+        yAxis: mouseY,
+    };
+    cardPositions.push(newCardObject);
+
+    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
 
 }
 
@@ -365,7 +363,7 @@ function createRedCard() {
     newDiv.classList.add("card-red")
     const newTextArea = document.createElement("textarea");
     newTextArea.classList.add("card-text")
-    newTextArea.placeholder = "Express yourself!";
+    newTextArea.placeholder = "Go note take yourself!";
     newDiv.appendChild(newTextArea);
 
     const newIconBox = document.createElement("div");
@@ -376,10 +374,16 @@ function createRedCard() {
 
     const currentContainer = document.getElementById("container");
     currentContainer.appendChild(newDiv)
-    const redCardDelete = document.getElementById(`red-card_delete${randomID}`); 
-    // yellowCardDelete.style.display = "none";
+    const redCardDelete = document.getElementById(`red-card_delete${randomID}`);
 
-    cardPositions.push(newDiv)
+    const newCardObject = {
+        id: newDivID,
+        xAxis: mouseX,
+        yAxis: mouseY,
+    };
+    cardPositions.push(newCardObject);
+
+    localStorage.setItem("cardPositionGroup", JSON.stringify(cardPositions));
 
 }
 
@@ -390,37 +394,155 @@ function loadCardPositions() {
     if (cardPositions) {
         storedPositions.forEach(cardPosition => {
 
-            let newDiv = document.createElement("div");
-            const newDivID = cardPosition.id;
-            newDiv.id = newDivID;
-            newDiv.classList.add("card-blue")
-            const newTextArea = document.createElement("textarea");
-            newTextArea.classList.add("card-text")
-            newTextArea.placeholder = "What's your next best idea?";
-            newDiv.appendChild(newTextArea);
-        
-            const newIconBox = document.createElement("div");
-            newIconBox.id = `blue-card_delete${newDivID}`;
-            newIconBox.classList.add("card-icon");
-            newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
-            newDiv.appendChild(newIconBox);
-        
-            const currentContainer = document.getElementById("container");
-            currentContainer.appendChild(newDiv)
-            const blueCardDelete = document.getElementById(`blue-card_delete${newDivID}`);
-            blueCardDelete.style.display = "none";
-            
-            newDiv.style.left = `${cardPosition.xAxis}px`;
-            newDiv.style.top = `${cardPosition.yAxis}px`;
-            newTextArea.value = `${cardPosition.text}`;
+            const storedID = cardPosition.id || "";
 
-            // need to add conditional logic so that when there is no text it reverts to placeholder value for the textarea
-    
-            if (cardPositions.length > 0) {
-                const lastCardIndex = cardPositions.length - 1;
-                cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
-                cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
-                cardPositions[lastCardIndex].text = cardPosition.text;
+            const blueDetection = storedID.includes("blue");
+            const yellowDetection = storedID.includes("yellow");
+            const redDetection = storedID.includes("red");
+            const orangeDetection = storedID.includes("orange");
+
+            if (blueDetection) {
+                console.log("blue card has been detected here!")
+                let newDiv = document.createElement("div");
+                const newDivID = cardPosition.id;
+                newDiv.id = newDivID;
+                newDiv.classList.add("card-blue")
+                const newTextArea = document.createElement("textarea");
+                newTextArea.classList.add("card-text")
+                newTextArea.placeholder = "What's your next best idea?";
+                newDiv.appendChild(newTextArea);
+
+                const newIconBox = document.createElement("div");
+                newIconBox.id = `blue-card_delete${newDivID}`;
+                newIconBox.classList.add("card-icon");
+                newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
+                newDiv.appendChild(newIconBox);
+
+                const currentContainer = document.getElementById("container");
+                currentContainer.appendChild(newDiv)
+                const blueCardDelete = document.getElementById(`blue-card_delete${newDivID}`);
+                blueCardDelete.style.display = "none";
+
+                newDiv.style.left = `${cardPosition.xAxis}px`;
+                newDiv.style.top = `${cardPosition.yAxis}px`;
+                newTextArea.value = `${cardPosition.text}`;
+
+                // need to add conditional logic so that when there is no text it reverts to placeholder value for the textarea
+
+                if (cardPositions.length > 0) {
+                    const lastCardIndex = cardPositions.length - 1;
+                    cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
+                    cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+                    cardPositions[lastCardIndex].text = cardPosition.text;
+                }
+            }
+
+            if (yellowDetection) {
+                console.log("yellow card has been detected here!")
+
+                let newDiv = document.createElement("div");
+                const newDivID = cardPosition.id;
+                newDiv.id = newDivID;
+                newDiv.classList.add("card-yellow")
+                const newTextArea = document.createElement("textarea");
+                newTextArea.classList.add("card-text")
+                newTextArea.placeholder = "Go crazy with notetaking!";
+                newDiv.appendChild(newTextArea);
+
+                const newIconBox = document.createElement("div");
+                newIconBox.id = `yellow-card_delete${newDivID}`;
+                newIconBox.classList.add("card-icon");
+                newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
+                newDiv.appendChild(newIconBox);
+
+                const currentContainer = document.getElementById("container");
+                currentContainer.appendChild(newDiv)
+                const yellowCardDelete = document.getElementById(`yellow-card_delete${newDivID}`);
+                yellowCardDelete.style.display = "none";
+
+                newDiv.style.left = `${cardPosition.xAxis}px`;
+                newDiv.style.top = `${cardPosition.yAxis}px`;
+                newTextArea.value = `${cardPosition.text}`;
+
+                if (cardPositions.length > 0) {
+                    const lastCardIndex = cardPositions.length - 1;
+                    cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
+                    cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+                    cardPositions[lastCardIndex].text = cardPosition.text;
+                }
+
+            }
+
+            if (redDetection) {
+                console.log("red card has been detected here!")
+
+                let newDiv = document.createElement("div");
+                const newDivID = cardPosition.id;
+                newDiv.id = newDivID;
+                newDiv.classList.add("card-red")
+                const newTextArea = document.createElement("textarea");
+                newTextArea.classList.add("card-text")
+                newTextArea.placeholder = "Go note take yourself!";
+                newDiv.appendChild(newTextArea);
+
+                const newIconBox = document.createElement("div");
+                newIconBox.id = `red-card_delete${newDivID}`;
+                newIconBox.classList.add("card-icon");
+                newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
+                newDiv.appendChild(newIconBox);
+
+                const currentContainer = document.getElementById("container");
+                currentContainer.appendChild(newDiv)
+                const redCardDelete = document.getElementById(`red-card_delete${newDivID}`);
+                redCardDelete.style.display = "none";
+
+                newDiv.style.left = `${cardPosition.xAxis}px`;
+                newDiv.style.top = `${cardPosition.yAxis}px`;
+                newTextArea.value = `${cardPosition.text}`;
+
+                if (cardPositions.length > 0) {
+                    const lastCardIndex = cardPositions.length - 1;
+                    cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
+                    cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+                    cardPositions[lastCardIndex].text = cardPosition.text;
+                }
+
+            }
+
+            if (orangeDetection) {
+                console.log("orange card has been detected here!")
+
+                let newDiv = document.createElement("div");
+                const newDivID = cardPosition.id;
+                newDiv.id = newDivID;
+                newDiv.classList.add("card-orange")
+                const newTextArea = document.createElement("textarea");
+                newTextArea.classList.add("card-text")
+                newTextArea.placeholder = "Express yourself!";
+                newDiv.appendChild(newTextArea);
+
+                const newIconBox = document.createElement("div");
+                newIconBox.id = `orange-card_delete${newDivID}`;
+                newIconBox.classList.add("card-icon");
+                newIconBox.innerHTML += '<i class="iconoir-trash-solid"></i>';
+                newDiv.appendChild(newIconBox);
+
+                const currentContainer = document.getElementById("container");
+                currentContainer.appendChild(newDiv)
+                const orangeCardDelete = document.getElementById(`orange-card_delete${newDivID}`);
+                orangeCardDelete.style.display = "none";
+
+                newDiv.style.left = `${cardPosition.xAxis}px`;
+                newDiv.style.top = `${cardPosition.yAxis}px`;
+                newTextArea.value = `${cardPosition.text}`;
+
+                if (cardPositions.length > 0) {
+                    const lastCardIndex = cardPositions.length - 1;
+                    cardPositions[lastCardIndex].xAxis = cardPosition.xAxis;
+                    cardPositions[lastCardIndex].yAxis = cardPosition.yAxis;
+                    cardPositions[lastCardIndex].text = cardPosition.text;
+                }
+
             }
 
         });
