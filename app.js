@@ -6,6 +6,7 @@ let startY = 0;
 let initialMouseX, initialMouseY;
 
 let isDragging = false;
+let isActive = false;
 let isHover = false
 
 let mouseX = 0;
@@ -85,6 +86,18 @@ function cardClick(event) {
     
     if (isDragging) {
         isDragging = false;
+
+        cardElement.classList.remove("card-selected");
+        let smTopLeftDiv = cardElement.querySelector(".selected-sm_box-top_left");
+        let smTopRightDiv = cardElement.querySelector(".selected-sm_box-top_right");
+        let smBottomLeftDiv = cardElement.querySelector(".selected-sm_box-bottom_left");
+        let smBottomRightDiv = cardElement.querySelector(".selected-sm_box-bottom_right");
+
+        smTopLeftDiv.remove();
+        smTopRightDiv.remove();
+        smBottomLeftDiv.remove();
+        smBottomRightDiv.remove();
+
         console.log("drag stopped")
         
         // Remove event listeners
@@ -95,6 +108,23 @@ function cardClick(event) {
         currentUpHandler = null;
     } else {
         console.log("movement")
+        cardElement.classList.add("card-selected");
+        const topLeftSM = document.createElement("div");
+        const topRightSM = document.createElement("div");
+        const bottomLeftSM = document.createElement("div");
+        const bottomRightSM = document.createElement("div");
+
+        topLeftSM.classList.add("selected-sm_box-top_left");
+        topRightSM.classList.add("selected-sm_box-top_right");
+        bottomLeftSM.classList.add("selected-sm_box-bottom_left");
+        bottomRightSM.classList.add("selected-sm_box-bottom_right");
+
+
+        cardElement.appendChild(topLeftSM);
+        cardElement.appendChild(topRightSM);
+        cardElement.appendChild(bottomLeftSM);
+        cardElement.appendChild(bottomRightSM);
+
         mouseDown(cardElement);
         cardTextValue(cardElement)
     }
@@ -121,6 +151,8 @@ document.addEventListener("mouseover", (event) => {
             
             currentMoveHandler = null;
             currentUpHandler = null;
+
+            isActive = false;
         });
     };
 })
@@ -153,29 +185,14 @@ function mouseDown(element) {
     startY = rect.top;
 
     currentMoveHandler = () => mouseMove(element);
-    // currentUpHandler = () => mouseUp(element);
     
     document.addEventListener('mousemove', currentMoveHandler);
-    // document.addEventListener('mouseup', currentUpHandler);  
 }
 
 function mouseMove(element) {
     if (!isDragging) return;
 
     const cardID = element.id;
-
-    console.log(cardPositions)
-    console.log(cardID)
-
-    // const last2 = cardID.slice(-2);
-    // const blueNameString = `card-blue${last2}`;
-
-    // const blueSub = "blue";
-
-    // console.log(cardID)
-    // console.log(cardID.includes(blueSub)); // detecting blue goes to true
-
-    // const rect = element.getBoundingClientRect();
 
     const deltaX = mouseX - initialMouseX;
     const deltaY = mouseY - initialMouseY;
