@@ -591,17 +591,33 @@ function cardDeleteAction() {
     }
 }
 
+function initialCameraView() {
 
-document.addEventListener('DOMContentLoaded', loadCardPositions);
+    const notePicker = document.getElementById("note-picker");
+    const canvasContainer = document.getElementById("container");
+
+    window.appendChild(notePicker);
+    const containerWidth = canvasContainer.offsetWidth;
+    const containerHeight = canvasContainer.offsetHeight;
+
+    // Center the view
+    window.scrollTo({
+        left: (containerWidth / 2),
+        top: (containerHeight / 2),
+        behavior: 'smooth' // Optional: adds smooth scrolling
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    loadCardPositions();
+    initialCameraView(); // Call this instead of direct scrollTo
+});
 
 
 
 
 
 // things to do within the file
-// - adding additional colors of post its and more than one post it
 // - zoom in and out of board
-// - type into post it notes
-// - delete post it notes
 // - profile/auth for app
 // - cloud saving
