@@ -69,8 +69,8 @@ const yellowCardDelete = document.getElementById("yellow-card_delete");
 // yellowCardText.value = localStorage.getItem("yellowCardText")
 
 document.addEventListener('mousemove', function(event) {
-    mouseX = event.clientX; 
-    mouseY = event.clientY; 
+    mouseX = event.pageX;
+    mouseY = event.pageY;
 })
 
 document.addEventListener("click", function(event) {
@@ -178,11 +178,11 @@ function mouseDown(element) {
 
     console.log("moving card")
 
-    initialMouseX = mouseX;
-    initialMouseY = mouseY;
+    initialMouseX = event.pageX;
+    initialMouseY = event.pageY;
 
-    startX = rect.left;
-    startY = rect.top;
+    startX = rect.left + window.pageXOffset;
+    startY = rect.top + window.pageYOffset;
 
     currentMoveHandler = () => mouseMove(element);
     
@@ -324,8 +324,7 @@ function createYellowCard() {
 
     const currentContainer = document.getElementById("container");
     currentContainer.appendChild(newDiv)
-    const yellowCardDelete = document.getElementById(`yellow-card_delete${randomID}`); 
-    // yellowCardDelete.style.display = "none";
+    const yellowCardDelete = document.getElementById(`yellow-card_delete${randomID}`);
 
     const newCardObject = {
         id: newDivID,
@@ -593,10 +592,8 @@ function cardDeleteAction() {
 
 function initialCameraView() {
 
-    const notePicker = document.getElementById("note-picker");
     const canvasContainer = document.getElementById("container");
 
-    window.appendChild(notePicker);
     const containerWidth = canvasContainer.offsetWidth;
     const containerHeight = canvasContainer.offsetHeight;
 

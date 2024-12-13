@@ -9,9 +9,9 @@ body {
             linear-gradient(#292a30 .1em, transparent .1em),
             linear-gradient(90deg, #292a30 .1em, transparent .1em);
     background-size: 4em 4em;
-    width: 2000px;
-    height: 2000px;
-    overflow: hidden;
+    width: 4000px;
+    height: 4000px;
+    overflow: scroll;
 }
 
 .card-yellow {
@@ -214,7 +214,7 @@ body {
 
 #note-picker {
     display: inline-flex;
-    position: absolute;
+    position: fixed;
     top: 80px;
     left: 32px;
     padding: 20px 8px;
