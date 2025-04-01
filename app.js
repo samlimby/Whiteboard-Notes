@@ -601,17 +601,34 @@ function initialCameraView() {
     window.scrollTo({
         left: (containerWidth / 2),
         top: (containerHeight / 2),
-        behavior: 'smooth' // Optional: adds smooth scrolling
+        behavior: 'smooth'
     });
 }
 
 document.addEventListener("DOMContentLoaded", function(){
     loadCardPositions();
-    initialCameraView(); // Call this instead of direct scrollTo
+    initialCameraView();
 });
 
+const container = document.getElementById("container")
+document.addEventListener("keydown", canvasZoom);
+
+// console.log(container)
 
 
+function canvasZoom(e) {
+
+    console.log("zoom function triggered")
+
+    if(e.code === "Equal") {
+        console.log("increase action")
+        container.classList.add("canvas_scale_1");
+    } else if (e.code === "Minus") {
+        console.log("decrease action")
+        container.classList.add("canvas_scale-1");
+    };
+
+};
 
 
 // things to do within the file

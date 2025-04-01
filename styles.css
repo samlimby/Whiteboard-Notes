@@ -14,6 +14,30 @@ body {
     overflow: scroll;
 }
 
+.canvas_scale_1 {
+    transform: scale(1.25);
+}
+
+.canvas_scale_2 {
+    transform: scale(1.5);
+}
+
+.canvas_scale_3 {
+    transform: scale(2);
+}
+
+.canvas_scale-1 {
+    transform: scale(0.75);
+}
+
+.canvas_scale-2 {
+    transform: scale(0.5);
+}
+
+.canvas_scale-3 {
+    transform: scale(0.25);
+}
+
 .card-yellow {
     display: flex;
     width: 240px;
